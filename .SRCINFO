@@ -1,0 +1,18 @@
+pkgbase = beeper-beta-bin
+	pkgdesc = A unified messaging app
+	pkgver = 4.0.306
+	pkgrel = 1
+	url = https://beeper.com/
+	arch = x86_64
+	license = LicenseRef-beeper
+	provides = beeper
+	conflicts = beeper
+	options = !strip
+	options = !debug
+	source = beeper-beta-bin-4.0.306.AppImage::https://beeper-desktop.download.beeper.com/builds/Beeper-Beta-4.0.306.AppImage
+	source = beeper.desktop
+	sha256sums = 104f40077930d99b4ad0c62e54e784d510d7ea4398cd474ed1003c3101e85019
+	sha256sums = 05832b3a54e5a08cb48cad8f1be598be2fd3d2b538c3b000f698c4704c3c24fd
+
+pkgname = beeper-beta-bin
+	depends = hicolor-icon-theme
