@@ -13,7 +13,7 @@
 # basic info
 _pkgname='beeper'
 pkgname="$_pkgname${_pkgtype:-}"
-pkgver=4.0.306
+pkgver=4.0.437
 pkgrel=1
 pkgdesc="A unified messaging app"
 url="https://beeper.com/"
@@ -22,11 +22,11 @@ arch=('x86_64')
 provides=("$_pkgname")
 conflicts=("$_pkgname")
 source=(
-  "${pkgname}-${pkgver}.AppImage"::"https://beeper-desktop.download.beeper.com/builds/Beeper-Beta-${pkgver}.AppImage"
+  "${pkgname}-${pkgver}.AppImage"::"https://beeper-desktop.download.beeper.com/builds/Beeper-${pkgver}.AppImage"
   $_pkgname.desktop  
 )
 sha256sums=(
-  '104f40077930d99b4ad0c62e54e784d510d7ea4398cd474ed1003c3101e85019'
+  'ed85ea7247e28fab6ff2c8e032fbf4ed1a9936dc95660a6b987d9dfc03cca22f'
   '05832b3a54e5a08cb48cad8f1be598be2fd3d2b538c3b000f698c4704c3c24fd'
 )
 
