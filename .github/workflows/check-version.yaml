@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: '0 * * * *'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   get-version:
     runs-on: ubuntu-latest
@@ -40,3 +44,64 @@ jobs:
           )
 
           echo "PACKAGE_VERSION=${PACKGE_VERSION}" >> "$GITHUB_OUTPUT"
+
+  update-version:
+    runs-on: ubuntu-latest
+    if: needs.get-version.outputs.latest-version != needs.get-version.outputs.package-version
+    needs:
+      - get-version
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update PKGBUILD version
+        run: |
+          sed -i "s/pkgver=.*/pkgver=${LATEST_VERSION}/g" ./PKGBUILD
+        env:
+          LATEST_VERSION: ${{ needs.get-version.outputs.latest-version }}
+
+      - name: Update checksums
+        run: |
+          set -xo
+
+          source ./PKGBUILD
+
+          for FILE_INDEX in "${!source[@]}"; do
+            FILENAME=${source[$FILE_INDEX]}
+
+            if [[ $FILENAME == *"::"* ]]; then
+              REMOTE_URL=$(awk -F'::' '{print $2}' <<< $FILENAME)
+              FILENAME=$(awk -F'::' '{print $1}' <<< $FILENAME)
+
+              curl -so "$FILENAME" "$REMOTE_URL"
+            fi
+
+            sha256sums[$FILE_INDEX]=$(sha256sum "$FILENAME" | cut -d' ' -f1)
+          done
+
+          CHECKSUMS="sha256sums=("
+          for CHECKSUM in "${sha256sums[@]}"; do
+            CHECKSUMS="${CHECKSUMS}\n  '${CHECKSUM}'"
+          done
+          CHECKSUMS="${CHECKSUMS}\n)"
+
+          sed -i '/^\(sha\|md\)[0-9]\+sums=/{:a;N;/)/!ba;s~.*~'"${CHECKSUMS}"'~}' PKGBUILD
+        env:
+          LATEST_VERSION: ${{ needs.get-version.outputs.latest-version }}
+
+      - name: Update SRCINFO
+        uses: heyhusen/archlinux-package-action@v2.2.1
+        with:
+          namcap: false
+          srcinfo: true
+          # I want to use the updpkgsums but it doesn't
+          # work for local files like the beeper.desktop
+          updpkgsums: false
+          # Same problem, can't run makepkg
+          flags: ''
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: PKGBUILD,.SRCINFO
+          title: "Bump Beeper to ${{ needs.get-version.outputs.latest-version }}"
+          branch: bump-version
