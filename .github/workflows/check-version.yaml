@@ -1,0 +1,42 @@
+name: Automatic Update
+
+on:
+  workflow_dispatch: {}
+
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    outputs:
+      latest-version: ${{ steps.latest-version.outputs.LATEST_VERSION }}
+      package-version: ${{ steps.package-version.outputs.PACKAGE_VERSION }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: latest-version
+        name: Get version from beeper.com
+        run: |
+          set -xo
+
+          LATEST_VERSION=$(
+            curl -ILs -o /dev/null -w '%{url_effective}' "${BEEPER_BETA_URL}" \
+            | grep -oE '.*builds/Beeper-([.0-9]+)\.AppImage' \
+            | sed 's~.*builds/Beeper-\([.0-9]\+\)\.AppImage~\1~i'
+          )
+
+          echo "LATEST_VERSION=${LATEST_VERSION}" >> "$GITHUB_OUTPUT"
+        env:
+          BEEPER_BETA_URL: https://api.beeper.com/desktop/download/linux/x64/stable/com.automattic.beeper.desktop
+
+      - id: package-version
+        name: Get version from PKGBUILD
+        run: |
+          set -xo
+
+          PACKGE_VERSION=$(
+            cat PKGBUILD  | grep -o '^pkgver=.*' | sed 's/^pkgver=\(.\+\)/\1/'
+          )
+
+          echo "PACKAGE_VERSION=${PACKGE_VERSION}" >> "$GITHUB_OUTPUT"
