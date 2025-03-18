@@ -13,7 +13,7 @@
 # basic info
 _pkgname='beeper'
 pkgname="$_pkgname${_pkgtype:-}"
-pkgver=4.0.522
+pkgver=4.0.551
 pkgrel=1
 pkgdesc="A unified messaging app"
 url="https://beeper.com/"
@@ -26,7 +26,7 @@ source=(
   $_pkgname.desktop  
 )
 sha256sums=(
-  'a9755910893de69e6c59d83ab2d4165109ffc38f894260d1e87c929460b9c809'
+  '38bc0b8e05853a2052e51904a6f847ee1adeae2f0417e251bcacbe29dadef203'
   '05832b3a54e5a08cb48cad8f1be598be2fd3d2b538c3b000f698c4704c3c24fd'
 )
 options=('!strip' '!debug')
