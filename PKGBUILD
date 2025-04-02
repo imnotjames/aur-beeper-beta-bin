@@ -49,7 +49,7 @@ package() {
   install -Dm644 "$srcdir/beeper.desktop" "$pkgdir/usr/share/applications/beeper.desktop"
 
   # icons
-  install -Dm644 "$srcdir/squashfs-root/usr/share/icons/hicolor/0x0/apps/beepertexts.png" \
+  install -Dm644 "$srcdir/squashfs-root/usr/share/icons/hicolor/512x512/apps/beepertexts.png" \
     "$pkgdir/usr/share/icons/hicolor/0x0/apps/beeper.png"
 
   # license files
